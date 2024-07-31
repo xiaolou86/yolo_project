@@ -8,10 +8,10 @@ class Camera:
     def set_strategy(self, strategy: DetectionStrategy):
         self.strategy = strategy
     
-    def process_frame(self, frame):
-        return self.strategy.detect(frame)
     
-    def capture_and_process(self, camera_source):
+    def capture_and_process(self, source):
+        self.strategy.detect(source)
+        """
         cap = cv2.VideoCapture(0)  # Adjust as necessary for your camera index
         while True:
             ret, frame = cap.read()
@@ -26,4 +26,4 @@ class Camera:
                 break
         cap.release()
         cv2.destroyAllWindows()
-
+        """
