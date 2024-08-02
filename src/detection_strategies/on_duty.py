@@ -8,6 +8,7 @@ send alert if satisfying any of the following conditions:
 """
 class OnDutyDetectionStrategy(DetectionStrategy):
     def __init__(self, model):
+        # need to use "yolov8n-pose.pt"
         self.model = YOLO(model)
         self.class_id = list(self.model.names.values()).index('person')  # Assuming 'person' is the class name for people
 
@@ -58,6 +59,15 @@ class OnDutyDetectionStrategy(DetectionStrategy):
 
             for box, track_id in zip(boxes, track_ids):
                 # TODO: add logic for move
+                if track_id not in self.persons:
+                    self.persons[track_id] = box
+                    self.no_move = False
+                    continue
+                else:
+                    old_box = self.persons[track_id]
+
+                    self.persons[track_id] = box
+
 
 
             video_writer.write(frame)
