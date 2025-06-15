@@ -1,5 +1,6 @@
 from .detection_strategy import DetectionStrategy
 from ultralytics import YOLO
+import time
 
 """
 send alert if satisfying any of the following conditions:
@@ -8,7 +9,7 @@ send alert if satisfying any of the following conditions:
 """
 class OnDutyDetectionStrategy(DetectionStrategy):
     def __init__(self, model):
-        # need to use "yolov8n-pose.pt"
+        # TODO: need to use "yolov8n-pose.pt"
         self.model = YOLO(model)
         self.class_id = list(self.model.names.values()).index('person')  # Assuming 'person' is the class name for people
 
@@ -17,6 +18,7 @@ class OnDutyDetectionStrategy(DetectionStrategy):
         self.last_time_no_move = 0
         self.last_time_no_person = 0
         self.persons = {}
+        self.keypoints = None
     
     def detect(self, source):
         # Video setup
@@ -48,7 +50,7 @@ class OnDutyDetectionStrategy(DetectionStrategy):
             if len(boxes) == 0:
                 if self.no_person == True:
                     if current_time - self.last_time_no_person > 60*5: # 300 seconds threshold
-                        # TODO: alert
+                        # TODO: generate an alert
                         self.last_time_no_person = current_time
                 else:
                     self.no_person = True
@@ -58,7 +60,7 @@ class OnDutyDetectionStrategy(DetectionStrategy):
             self.no_person = False
 
             for box, track_id in zip(boxes, track_ids):
-                # TODO: add logic for move
+                # TODO: add logic for move; clearup self.persions
                 if track_id not in self.persons:
                     self.persons[track_id] = box
                     self.no_move = False
